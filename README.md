@@ -1,126 +1,97 @@
-# Adobe Hackathon Round 1B: Persona-Driven Document Intelligence
+# 🚀 Adobe Hackathon Round 1B: Persona-Driven Document Intelligence
 
-## Project Overview
+## 🧠 Overview
 
-This project implements an intelligent document analysis system that extracts and ranks relevant sections from a collection of PDF documents based on a specific persona and their job-to-be-done requirements. The system processes 3-10 related PDF files and outputs a structured JSON with metadata, extracted sections, and subsection analysis.
+This project implements a **persona-driven document intelligence system** that intelligently extracts and ranks relevant content from a set of 3–10 related PDF documents. By understanding a **persona** and their **job-to-be-done**, the system surfaces the most semantically aligned sections and outputs a structured, easy-to-consume JSON format.
 
-## Features
+> 📄 Input: 3–10 PDF files
+> 🧍 Persona: Domain-specific role (e.g., Research Analyst)
+> ✅ Output: Structured, ranked JSON of relevant sections
 
-- **PDF Processing**: Extracts text, structure, and formatting information from PDF documents
-- **Section Detection**: Identifies headings and sections using font analysis and pattern matching
-- **Semantic Relevance**: Uses sentence transformers to calculate relevance scores based on persona and job requirements
-- **Ranked Output**: Provides top-ranked sections and subsections based on importance
-- **Offline Operation**: Runs completely offline with no network dependencies
-- **Fast Processing**: Designed to complete within 60 seconds for 3-5 documents
+---
 
-## Technical Approach
+## ✨ Key Features
 
-### Core Components
+* 🔍 **Semantic Relevance Scoring**: Uses sentence embeddings to rank content based on persona relevance.
+* 🧾 **Section & Subsection Detection**: Extracts document structure using font heuristics and layout analysis.
+* ⚙️ **Fast & Lightweight**: Completes processing under 60 seconds (3–5 PDFs) using a <100MB model.
+* 🔐 **Fully Offline**: Requires no internet access, ensuring compliance with air-gapped environments.
+* 📦 **Dockerized for Portability**: One-command setup and execution via Docker.
 
-1. **DocumentProcessor Class**: Main orchestrator that handles PDF processing, section extraction, and relevance scoring
-2. **PyMuPDF Integration**: Uses PyMuPDF for robust PDF text extraction with formatting information
-3. **Sentence Transformers**: Employs the `all-MiniLM-L6-v2` model (~90MB) for semantic similarity calculations
-4. **Heuristic Section Detection**: Combines font size, bold formatting, and pattern matching to identify headings
+---
 
-### Processing Pipeline
+## 🧪 Technical Architecture
 
-1. **PDF Extraction**: Extract text blocks with positioning and formatting metadata
-2. **Section Identification**: Detect headings using font analysis and regex patterns
-3. **Subsection Extraction**: Group content under identified sections
-4. **Relevance Scoring**: Calculate semantic similarity between persona/job and content
-5. **Ranking & Output**: Sort by relevance and generate structured JSON output
+### 📂 Core Modules
 
-### Models and Libraries Used
+| Component             | Description                                                       |
+| --------------------- | ----------------------------------------------------------------- |
+| `DocumentProcessor`   | Orchestrates the pipeline from PDF input to ranked output         |
+| PyMuPDF (`fitz`)      | Extracts rich text + formatting metadata from PDFs                |
+| Sentence Transformers | Computes semantic similarity using `all-MiniLM-L6-v2` (~90MB)    |
+| Heuristic Detection   | Identifies sections using font size, boldness, and regex patterns |
 
-- **PyMuPDF (fitz)**: PDF text extraction and structure analysis
-- **Sentence Transformers**: Semantic similarity calculations using `all-MiniLM-L6-v2`
-- **NumPy**: Numerical computations for similarity scoring
-- **Regex**: Pattern matching for section detection
+---
 
-## Build and Run Instructions
+### 🔁 Processing Pipeline
 
-### Prerequisites
+1. **PDF Parsing**: Extracts text, layout, and styling info
+2. **Section Identification**: Detects headings based on visual cues and text patterns
+3. **Content Grouping**: Bundles text under logical sections and subsections
+4. **Semantic Scoring**: Measures similarity to persona and job-to-be-done using embeddings
+5. **Structured Output**: Returns ranked sections in JSON with metadata
 
-- Docker installed on your system
-- AMD64 architecture support
+---
 
-### Building the Docker Image
+## 🧰 Libraries & Tools
+
+* [`PyMuPDF`](https://pymupdf.readthedocs.io/): High-performance PDF extraction
+* [`SentenceTransformers`](https://www.sbert.net/): For semantic similarity
+* `NumPy`, `re`, `json`: Utilities for analysis, scoring, and output
+
+---
+
+## 🚀 How to Run
+
+### 🧾 Prerequisites
+
+* Docker installed (`https://www.docker.com`)
+* Linux/AMD64 architecture support
+
+### 🏗️ Build the Docker Image
 
 ```bash
-docker build --platform linux/amd64 -t mysolutionname:somerandomidentifier .
+docker build --platform linux/amd64 -t adobe-doc-intel:latest .
 ```
 
-### Running the Solution
+### 📂 Prepare Input & Output Folders
 
-1. Create input and output directories:
 ```bash
 mkdir -p input output
+# Add 3–10 related PDFs to the 'input' folder
 ```
 
-2. Place your PDF files in the `input` directory (3-10 related PDFs)
-
-3. Run the container:
-```bash
-docker run --rm -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output --network none mysolutionname:somerandomidentifier
-```
-
-### Expected Output
-
-The system will generate `output.json` in the `/app/output` directory containing:
-
-- **Metadata**: Input documents, persona, job-to-be-done, timestamp
-- **Extracted Sections**: Top 20 most relevant sections with rankings
-- **Subsection Analysis**: Top 30 most relevant subsections with refined text
-
-## Constraints Compliance
-
-- ✅ **CPU Only**: No GPU dependencies
-- ✅ **Model Size ≤ 1GB**: Uses ~90MB sentence transformer model
-- ✅ **Processing Time ≤ 60s**: Optimized for 3-5 documents
-- ✅ **Offline Operation**: No network access required
-- ✅ **AMD64 Architecture**: Compatible with specified platform
-
-## File Structure
-
-```
-.
-├── main.py                 # Main processing script
-├── requirements.txt        # Python dependencies
-├── Dockerfile             # Container configuration
-├── config.json            # Configuration for persona and job-to-be-done
-├── test_solution.py       # Test suite for validation
-├── run_tests.py           # Test runner script
-├── README.md              # This file
-└── approach_explanation.md # Detailed approach explanation
-```
-
-## Testing
-
-### Running Tests
-
-To validate the solution, run the test suite:
+### ▶️ Run the Pipeline
 
 ```bash
-python run_tests.py
+docker run --rm \
+  -v $(pwd)/input:/app/input \
+  -v $(pwd)/output:/app/output \
+  --network none \
+  adobe-doc-intel:latest
 ```
 
-This will:
-- Test constraint compliance (model size, offline operation)
-- Validate document processing pipeline
-- Generate sample output for verification
+### 📤 Output Format
 
-### Supported Document Types
+`output/output.json` includes:
 
-The system is designed to work with various document types:
-- Research papers
-- Academic textbooks
-- Financial reports
-- Business documents
-- Technical manuals
+* ✅ `metadata`: Files processed, persona, job description, timestamp
+* 🔝 `sections`: Top 20 most relevant sections
+* 🔍 `subsections`: Top 30 most relevant subsections
 
-### Configuration
+---
 
-Edit `config.json` to test different personas and jobs-to-be-done:
+## 📋 Sample Configuration (`config.json`)
 
 ```json
 {
@@ -129,15 +100,79 @@ Edit `config.json` to test different personas and jobs-to-be-done:
 }
 ```
 
-## Performance Notes
+Update this file to match different personas or tasks.
 
-- Processing time scales with document count and complexity
-- Memory usage is optimized for the 16GB RAM constraint
-- Model loading is done once at initialization for efficiency
+---
 
-## Troubleshooting
+## ✅ Hackathon Constraints Checklist
 
-- Ensure PDF files are readable and not corrupted
-- Check that input directory contains valid PDF files
-- Verify Docker has sufficient resources allocated
-- Monitor logs for any processing errors 
+| Constraint               | Status         |
+| ------------------------ | -------------- |
+| CPU-only                 | ✅ Compliant    |
+| Model size ≤ 1GB         | ✅ 90MB         |
+| No internet access       | ✅ Offline mode |
+| Process ≤ 60s (3–5 PDFs) | ✅ Optimized    |
+| Platform: AMD64 + Docker | ✅ Compatible   |
+
+---
+
+## 🧪 Testing
+
+### 📌 Run Tests
+
+```bash
+python run_tests.py
+```
+
+### 🔍 Validations
+
+* ✅ Model size, offline compliance
+* ✅ Document parsing and section detection
+* ✅ Semantic ranking logic
+* ✅ Sample JSON generation
+
+---
+
+## 🗂️ File Structure
+
+```
+.
+├── main.py                 # Entry point for processing
+├── config.json             # Persona & task configuration
+├── requirements.txt        # Python dependencies
+├── Dockerfile              # Docker setup
+├── test_solution.py        # Unit & functional tests
+├── run_tests.py            # Test runner
+├── approach_explanation.md # Deep-dive on methodology
+└── README.md               # Project documentation (this file)
+```
+
+---
+
+## 🧾 Supported Document Types
+
+* Research papers
+* Technical reports
+* Academic textbooks
+* Financial or policy documents
+* Instruction manuals
+
+---
+
+## 🚨 Troubleshooting
+
+| Issue                     | Fix                                                        |
+| ------------------------- | ---------------------------------------------------------- |
+| 🗂️ Empty `input/` folder | Add 3–10 valid PDF files                                   |
+| ❌ PDFs not processed      | Ensure they're text-based (not image-only)                 |
+| 🐳 Docker issues          | Confirm resources are allocated and AMD64 platform is used |
+| ⚠️ No output.json         | Check logs and validate `config.json` syntax               |
+
+---
+
+## 🏁 Conclusion
+
+This solution demonstrates how persona-aligned insights can be efficiently extracted from complex documents. Built with performance and portability in mind, it's tailored for Adobe's evaluation framework — fast, offline, and intelligent.
+
+---
+
