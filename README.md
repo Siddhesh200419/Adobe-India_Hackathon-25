@@ -170,6 +170,14 @@ python run_tests.py
 
 ---
 
+## 👨‍💻 Developed For
+
+**Adobe India Hackathon 2025 – Round 1A: PDF Structural Outline Extraction**
+By: *[Triple Byte]*
+
+---
+
+
 ## 🏁 Conclusion
 
 This solution demonstrates how persona-aligned insights can be efficiently extracted from complex documents. Built with performance and portability in mind, it's tailored for Adobe's evaluation framework — fast, offline, and intelligent.
